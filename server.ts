@@ -759,9 +759,12 @@ app.post('/api/chat', async (req: Request, res: Response) => {
     res.write(': connected\n\n');
 
     let isClientClosed = false;
-    req.on('close', () => {
-      isClientClosed = true;
-    });
+
+res.on('close', () => {
+  if (!res.writableEnded) {
+    isClientClosed = true;
+  }
+});
 
     const safeWrite = (data: string) => {
       if (!isClientClosed && !res.writableEnded && res.writable) {
