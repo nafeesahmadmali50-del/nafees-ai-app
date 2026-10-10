@@ -1,0 +1,11 @@
+{
+  "name": "NAFEES AI",
+  "description": "Fast, mobile-first AI assistant in Hindi & English with Study Mode, Business Mode, Voice Chat, and instant streaming powered by Gemini.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
+

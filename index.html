@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="hi" class="dark">
+  <head>
+    <script>
+      // Suppress Vite HMR WebSocket connection errors as per AI Studio runtime environment rules ("HMR: Disabled. Ignore WebSocket errors.")
+      (function() {
+        function isHmrError(err) {
+          if (!err) return false;
+          var msg = (typeof err === 'string' ? err : (err.message || '')) + '';
+          var stack = (err && err.stack ? err.stack : '') + '';
+          return (
+            msg.indexOf('WebSocket') !== -1 ||
+            msg.indexOf('createWebSocketModuleRunnerTransport') !== -1 ||
+            stack.indexOf('createWebSocketModuleRunnerTransport') !== -1 ||
+            stack.indexOf('@vite/client') !== -1
+          );
+        }
+        window.addEventListener('unhandledrejection', function(event) {
+          if (isHmrError(event.reason)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }, true);
+        window.addEventListener('error', function(event) {
+          if (isHmrError(event.message) || isHmrError(event.error)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>NAFEES AI</title>
+    <meta name="description" content="Fast, mobile-first AI assistant in Hindi & English with Study Mode, Business Mode, Voice Chat, and instant streaming powered by Gemini." />
+    <meta property="og:title" content="NAFEES AI" />
+    <meta property="og:description" content="Fast, mobile-first AI assistant in Hindi & English with Study Mode, Business Mode, Voice Chat, and instant streaming powered by Gemini." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#060913" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#050811] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-hidden font-sans">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
