@@ -1204,62 +1204,47 @@ Output ONLY the final English prompt, nothing else.`,
         // Silently continue to fallback engine when model requires paid billing
       }
     }
+// 3. High-quality visual generation fallback
+if (!imageUrl) {
+  let width = 1024;
+  let height = 1024;
 
-    // 3. High-quality visual generation fallback
-    if (!imageUrl) {
-      // Check if robot prompt and local asset exists for instant test demo
-      const isRobotPrompt = /robot|रोबोट/i.test(prompt);
-      if (isRobotPrompt && cleanRatio === '9:16' && (style === '3D Cartoon' || style === 'Realistic')) {
-        const fs = await import('fs');
-        const path = await import('path');
-        const robotAssetPath = path.join(process.cwd(), 'src/assets/images/cute_rain_robot_1791108260720.jpg');
-        if (fs.existsSync(robotAssetPath)) {
-          const imgBuf = fs.readFileSync(robotAssetPath);
-          imageUrl = `data:image/jpeg;base64,${imgBuf.toString('base64')}`;
-        }
-      }
+  if (cleanRatio === '9:16') {
+    width = 720;
+    height = 1280;
+  } else if (cleanRatio === '16:9') {
+    width = 1280;
+    height = 720;
+  }
 
-      if (!imageUrl) {
-        let width = 1024;
-        let height = 1024;
-        if (cleanRatio === '9:16') {
-          width = 720;
-          height = 1280;
-        } else if (cleanRatio === '16:9') {
-          width = 1280;
-          height = 720;
-        }
+  const encoded = encodeURIComponent(enrichedPrompt);
+  const pollinationsUrl = `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${Math.floor(Math.random() * 999999)}`;
 
-        const encoded = encodeURIComponent(enrichedPrompt);
-        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${Math.floor(Math.random() * 999999)}`;
-
-        try {
-          const imgRes = await fetch(pollinationsUrl);
-          if (imgRes.ok) {
-            const arrayBuf = await imgRes.arrayBuffer();
-            const b64 = Buffer.from(arrayBuf).toString('base64');
-            imageUrl = `data:image/jpeg;base64,${b64}`;
-          } else {
-            imageUrl = pollinationsUrl;
-          }
-        } catch {
-          imageUrl = pollinationsUrl;
-        }
-      }
+  try {
+    const imgRes = await fetch(pollinationsUrl);
+    if (imgRes.ok) {
+      const arrayBuf = await imgRes.arrayBuffer();
+      const b64 = Buffer.from(arrayBuf).toString('base64');
+      imageUrl = `data:image/jpeg;base64,${b64}`;
+    } else {
+      imageUrl = pollinationsUrl;
     }
-
+  } catch {
+    imageUrl = pollinationsUrl;
+  }
+}
     if (!imageUrl) {
       res.status(503).json({ error: 'इमेज अभी नहीं बन पाई। कृपया फिर कोशिश करें।' });
       return;
     }
-
-    res.json({
-      imageUrl,
-      prompt,
-      style,
-      enrichedPrompt,
-      aspectRatio: cleanRatio,
-    });
+    
+   res.json({
+  imageUrl,
+  prompt,
+  style,
+  enrichedPrompt,
+  aspectRatio: cleanRatio,
+});
   } catch (error: any) {
     res.status(503).json({ error: 'इमेज अभी नहीं बन पाई। कृपया फिर कोशिश करें।' });
   }
