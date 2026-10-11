@@ -422,20 +422,23 @@ export const ImageGenScreen: React.FC<ImageGenScreenProps> = ({
               </div>
             </div>
 
-            {/* Big Preview Box */}
             <div className="relative mx-auto flex items-center justify-center overflow-hidden rounded-2xl border border-cyan-500/30 bg-black/60 shadow-2xl p-1">
-              <img
-                src={currentImage}
-                alt="Generated AI Image"
-                referrerPolicy="no-referrer"
-                className={`max-h-[60vh] w-auto object-contain rounded-xl ${
-                  aspectRatio === '9:16'
-                    ? 'aspect-[9/16]'
-                    : aspectRatio === '16:9'
-                    ? 'aspect-video'
-                    : 'aspect-square'
-                }`}
-              />
+  <img
+    src={currentImage}
+    alt="Generated AI Image"
+    referrerPolicy="no-referrer"
+    className={`max-h-[60vh] w-auto object-contain rounded-xl ${
+      aspectRatio === '9:16'
+        ? 'aspect-[9/16]'
+        : aspectRatio === '16:9'
+        ? 'aspect-video'
+        : 'aspect-square'
+    }`}
+  />
+
+  <div className="absolute bottom-4 right-4 rounded-md bg-black/45 px-3 py-1 text-sm font-bold tracking-wide text-white/90 backdrop-blur-sm">
+    NAFEES AI
+  </div>
             </div>
 
             {/* Prompt details */}
