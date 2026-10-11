@@ -425,20 +425,20 @@ function sanitizeAiResponseText(
   }
 
   // 3. Enforce strict requested length
-  const len = detectLengthConstraint(userPrompt);
-  if (len === '1-line') {
-    const lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length > 0) {
-      cleaned = lines[0];
-    }
-  } else if (len === '2-lines') {
-    const lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length > 2) {
-      cleaned = lines.slice(0, 2).join('\n');
-    }
+const len = detectLengthConstraint(userPrompt);
+if (len === '1-line') {
+  const lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length > 0) {
+    cleaned = lines[0];
   }
+} else if (len === '2-lines') {
+  const lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length > 2) {
+    cleaned = lines.slice(0, 2).join('\n');
+  }
+}
 
-  return cleaned;
+return cleaned;
 }
 
 // Factory to create an immediate streaming sanitizer and line-limiter for SSE chunks
