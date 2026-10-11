@@ -52,22 +52,52 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings(currentUser?.id));
 
   // Load conversations for active user
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    if (!currentUser?.id) return [];
-    const stored = loadConversations(currentUser.id);
-    if (stored.length > 0) return stored;
-    return [createNewConversation('normal')];
-  });
+const [conversations, setConversations] = useState<Conversation[]>(() => {
+  if (!currentUser?.id) return [];
 
-  // Active chat ID - ensures the app opens DIRECTLY into Chat
-  const [activeChatId, setActiveChatIdState] = useState<string>(() => {
-    if (!currentUser?.id) return '';
-    const savedActiveId = getActiveConversationId(currentUser.id);
-    if (savedActiveId && conversations.some(c => c.id === savedActiveId)) {
-      return savedActiveId;
+  const stored = loadConversations(currentUser.id);
+  const freshChat = createNewConversation('normal');
+
+  // पुरानी खाली chats हटेंगी, पुरानी असली chats History में रहेंगी
+  const oldChats = stored.filter((chat) => chat.messages.length > 0);
+
+  return [freshChat, ...oldChats];
+});
+
+// App हमेशा नई खाली chat से खुलेगा
+const [activeChatId, setActiveChatIdState] = useState<string>(() => {
+  return conversations[0]?.id || '';
+});
+  // App से बाहर जाकर वापस आने पर नई खाली chat खोलें
+const wasAppHiddenRef = useRef(false);
+
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      wasAppHiddenRef.current = true;
+      return;
     }
-    return conversations[0]?.id || '';
-  });
+
+    if (document.visibilityState === 'visible' && wasAppHiddenRef.current) {
+      wasAppHiddenRef.current = false;
+
+      const freshChat = createNewConversation('normal');
+
+      setConversations((prev) => [
+        freshChat,
+        ...prev.filter((chat) => chat.messages.length > 0),
+      ]);
+
+      setActiveChatIdState(freshChat.id);
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, []);
 
   // Modals & Panels
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
