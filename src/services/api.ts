@@ -101,7 +101,7 @@ export async function streamChatCompletion({
     }, CHAT_TIMEOUT_MS);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('https://nafees-ai-app-2.onrender.com/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
