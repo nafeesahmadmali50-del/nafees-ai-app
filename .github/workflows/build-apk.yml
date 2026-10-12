@@ -36,7 +36,12 @@ jobs:
           if [ ! -d "android" ]; then
             npx cap add android
           fi
-
+            - name: Generate Android app icon    
+          run: |
+          npm install --no-save @capacitor/assets
+          mkdir -p assets
+          cp public/nafees-ai-icon.png assets/icon.png
+          npx capacitor-assets generate --android
       - name: Add microphone permission
         run: |
           python3 - <<'PY'
