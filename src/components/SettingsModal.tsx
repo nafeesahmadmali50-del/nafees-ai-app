@@ -798,7 +798,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-800 bg-[#050811] px-4 sm:px-6 py-3 flex items-center justify-between">
+        <div className="border-t border-slate-800 bg-[#050811] px-4 sm:px-6 pt-3 pb-[max(env(safe-area-inset-bottom),20px)] flex items-center justify-between">
           <div className="flex items-center gap-2 text-[11px] text-slate-400">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>
