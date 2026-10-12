@@ -38,9 +38,9 @@ jobs:
           fi
 
       - name: Generate Android app icon
-        run: |
-          npm install --no-save @capacitor/assets
-          mkdir -p assets
+        run: | 
+         npm install --no-save --legacy-peer-deps @capacitor/assets
+           mkdir -p assets
           cp public/nafees-ai-icon.png assets/icon.png
           npx capacitor-assets generate --android
       - name: Add microphone permission
