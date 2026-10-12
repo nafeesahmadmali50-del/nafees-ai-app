@@ -72,8 +72,7 @@ export const MIC_PERMISSION_DENIED_MESSAGE = 'माइक्रोफोन च
 
 // Speech Recognition (Speech-to-Text)
 export function isSpeechRecognitionSupported(): boolean {
-  if (typeof window === 'undefined') return false;
-  return Boolean((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+  return true;
 }
 
 export interface SpeechRecognizerHandlers {
@@ -83,59 +82,75 @@ export interface SpeechRecognizerHandlers {
   onEnd?: () => void;
 }
 
-export function createSpeechRecognizer(lang: string = 'hi-IN', handlers: SpeechRecognizerHandlers) {
-  if (!isSpeechRecognitionSupported()) {
-    return null;
-  }
+export function createSpeechRecognizer(
+  lang: string = 'hi-IN',
+  handlers: SpeechRecognizerHandlers
+) {
+  let partialListener: any = null;
+  let stopped = false;
 
-  try {
-    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRec();
+  return {
+    start: async () => {
+      try {
+        const permission = await SpeechRecognition.checkPermissions();
 
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = lang;
-
-    recognition.onstart = () => {
-      handlers.onStart?.();
-    };
-
-    recognition.onresult = (event: any) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
-
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
+        if (permission.speechRecognition !== 'granted') {
+          const requested = await SpeechRecognition.requestPermissions();
+          if (requested.speechRecognition !== 'granted') {
+            handlers.onError(MIC_PERMISSION_DENIED_MESSAGE);
+            return;
+          }
         }
+
+        const availability = await SpeechRecognition.available();
+        if (!availability.available) {
+          handlers.onError('इस फोन में वॉइस पहचान उपलब्ध नहीं है।');
+          return;
+        }
+
+        handlers.onStart?.();
+
+        partialListener = await SpeechRecognition.addListener(
+          'partialResults',
+          (data: any) => {
+            const text = data.matches?.[0] || '';
+            if (text) {
+              handlers.onResult(text, false);
+            }
+          }
+        );
+
+        await SpeechRecognition.start({
+          language: lang,
+          maxResults: 1,
+          partialResults: true,
+          popup: false,
+        });
+      } catch (err) {
+        console.error('Native speech recognition error:', err);
+        handlers.onError('वॉइस इनपुट में त्रुटि हुई');
       }
+    },
 
-      const text = finalTranscript || interimTranscript;
-      handlers.onResult(text, Boolean(finalTranscript));
-    };
+    stop: async () => {
+      if (stopped) return;
+      stopped = true;
 
-    recognition.onerror = (event: any) => {
-      let msg = 'वॉइस इनपुट में त्रुटि हुई';
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        msg = MIC_PERMISSION_DENIED_MESSAGE;
-      } else if (event.error === 'no-speech') {
-        msg = 'कोई आवाज नहीं पहचानी गई।';
-      }
-      handlers.onError(msg);
-    };
+      try {
+        await SpeechRecognition.stop();
+      } catch {}
 
-    recognition.onend = () => {
+      try {
+        if (partialListener) {
+          await partialListener.remove();
+          partialListener = null;
+        }
+      } catch {}
+
       handlers.onEnd?.();
-    };
-
-    return recognition;
-  } catch {
-    return null;
-  }
+    },
+  };
 }
-
 export interface AudioRecorderController {
   stop: () => Promise<{ base64: string; mimeType: string }>;
   cancel: () => void;
