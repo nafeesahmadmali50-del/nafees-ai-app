@@ -162,7 +162,7 @@ export const ImageGenScreen: React.FC<ImageGenScreenProps> = ({
     setSavedSuccess(false);
 
     try {
-      const response = await fetch('/api/generate-image', {
+    fetch('https://nafees-ai-app-2.onrender.com/api/generate-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
