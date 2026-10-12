@@ -229,7 +229,7 @@ export async function transcribeAudioWithGemini(
   mimeType: string,
   language: string = 'hi'
 ): Promise<string> {
-  const response = await fetch('/api/transcribe', {
+  const response = await fetch('https://nafees-ai-app-2.onrender.com/api/transcribe', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
