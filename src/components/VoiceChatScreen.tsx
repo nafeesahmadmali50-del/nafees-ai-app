@@ -346,7 +346,7 @@ export const VoiceChatScreen: React.FC<VoiceChatScreenProps> = ({
         // Try request with a single automatic retry on network drops
         for (let attempt = 0; attempt < 2; attempt++) {
           try {
-            response = await fetch('/api/voice-turn', {
+           fetch('https://nafees-ai-app-2.onrender.com/api/voice-turn', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
