@@ -235,7 +235,7 @@ export const VideoGenScreen: React.FC<VideoGenScreenProps> = ({
     setSavedSuccess(false);
 
     try {
-      const response = await fetch('/api/generate-video', {
+     fetch('https://nafees-ai-app-2.onrender.com/api/generate-video', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
