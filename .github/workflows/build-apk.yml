@@ -30,24 +30,32 @@ jobs:
 
       - name: Build web app
         run: npm run build
-
+     
       - name: Create Android project
         run: |
           if [ ! -d "android" ]; then
             npx cap add android
           fi
 
+      - name: Add microphone permission
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          text = p.read_text()
+
+          permission = '<uses-permission android:name="android.permission.RECORD_AUDIO" />'
+
+          if permission not in text:
+              text = text.replace(
+                  '<manifest xmlns:android="http://schemas.android.com/apk/res/android">',
+                  '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission
+              )
+
+          p.write_text(text)
+          PY
+
       - name: Sync Capacitor
         run: npx cap sync android
-
-      - name: Build Debug APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: NAFEES-AI-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+      
