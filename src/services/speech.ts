@@ -1,5 +1,5 @@
 // Speech Synthesis (Text-to-Speech) and Speech Recognition (Speech-to-Text)
-
+import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 // Check if speech synthesis is supported
 export function isSpeechSynthesisSupported(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
