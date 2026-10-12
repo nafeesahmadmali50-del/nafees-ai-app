@@ -85,9 +85,9 @@ export const Header: React.FC<HeaderProps> = ({
   const ModeIcon = modeInfo.icon;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 sm:h-16 w-full items-center justify-between border-b border-cyan-500/15 bg-[#050811]/90 px-3 sm:px-4 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex min-h-[72px] w-full items-center justify-between border-b border-cyan-500/15 bg-[#050811]/95 px-3 sm:px-4 pt-[max(env(safe-area-inset-top),12px)] pb-2 backdrop-blur-md">
       {/* Left: Hamburger Menu */}
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <button
           onClick={onOpenSidebar}
           aria-label="Open menu"
@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
 
         {/* Brand & Mode */}
-        <div className="flex flex-col select-none">
+        <div className="flex min-w-0 flex-col select-none">
           <div className="flex items-center gap-1.5">
             <span className="font-extrabold tracking-wider text-base sm:text-lg bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
               NAFEES AI
@@ -188,7 +188,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         {/* Profile Avatar Trigger */}
         {user && onOpenProfile && (
           <button
